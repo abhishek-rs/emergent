@@ -134,8 +134,7 @@ void draw() {
 
   background(255); //need to draw background everytime, since that makes you have a "clean" screen. comment out if you want to see what happens without it
   draw_viz();
-  myPort.write(1);
-
+  
   drawDataLoc();
   //get the powerspectrum (fft) per channel
   chan1.getSpectrum();
