@@ -85,7 +85,7 @@ class powerSpectrum {
         dataBuffer[n+chan*8] = newDataPoint;
 
       
-       println(n+"\t"+dataLoc[n]+"\t"+chan+"\t"+dataPoint);
+       println(n+"\t"+dataLoc[n]+"\t"+chan+"\t"+dataPoint+"\t"+newDataPoint);
        output.println(n+"\t"+dataLoc[n]+"\t"+chan+"\t"+dataPoint);
         n++;
         dataPoint=0;
