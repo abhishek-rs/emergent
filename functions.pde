@@ -47,7 +47,7 @@ class powerSpectrum {
     fft.forward(audio.mix);
     for (int i = 0; i < fft.specSize(); i++)
     {
-      visualize_spectrums(i);
+      //visualize_spectrums(i);
     }
   }
 
@@ -57,7 +57,7 @@ class powerSpectrum {
   }
   
   int mapData(int dataPoint){
-    int newData=dataPoint;
+    int newData=0;
     
     if(dataPoint>1){  
      newData=int(map(log(dataPoint),0, 11, 0, 256));
@@ -85,8 +85,10 @@ class powerSpectrum {
         dataBuffer[n+chan*8] = newDataPoint;
 
       
-       println(n+"\t"+dataLoc[n]+"\t"+chan+"\t"+dataPoint);
-       output.println(n+"\t"+dataLoc[n]+"\t"+chan+"\t"+dataPoint);
+
+       println(n+"\t"+dataLoc[n]+"\t"+chan+"\t"+dataPoint+"\t"+newDataPoint);
+       output.println(n+"\t"+dataLoc[n]+"\t"+chan+"\t"+dataPoint+"\t"+newDataPoint);
+
         n++;
         dataPoint=0;
       }

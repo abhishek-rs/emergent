@@ -25,15 +25,49 @@ powerSpectrum chan16;
 //create serial port
 Serial myPort;
 
+Minim minim_viz;
+AudioPlayer song_viz;
+FFT fft_viz;
+
+// Variables qui définissent les "zones" du spectre
+// Par exemple, pour les basses, on prend seulement les premières 4% du spectre total
+float specLow = 0.03; // 3%
+float specMid = 0.125;  // 12.5%
+float specHi = 0.20;   // 20%
+
+// Il reste donc 64% du spectre possible qui ne sera pas utilisé. 
+// Ces valeurs sont généralement trop hautes pour l'oreille humaine de toute facon.
+
 int[] dataBuffer = new int[256];
 int[] dataLoc = {2, 4, 8, 16, 32, 64, 128, 256};
 
-void setup() {
-  // just get the maximum framerate. 
-  frameRate(9.7);
 
+// Valeurs de score pour chaque zone
+float scoreLow = 0;
+float scoreMid = 0;
+float scoreHi = 0;
+
+// Valeur précédentes, pour adoucir la reduction
+float oldScoreLow = scoreLow;
+float oldScoreMid = scoreMid;
+float oldScoreHi = scoreHi;
+
+// Valeur d'adoucissement
+float scoreDecreaseRate = 25;
+
+// Cubes qui apparaissent dans l'espace
+int nbCubes;
+Cube[] cubes;
+
+//Lignes qui apparaissent sur les cotés
+int nbMurs = 500;
+Mur[] murs;
+
+void setup() {
+  fullScreen(P3D);
+  // just get the maximum framerate. 
+  setup_viz();
   //screensettings
-  size(512, 720);
   background(255);
 
   //connect with arduino
@@ -97,8 +131,11 @@ void setup() {
 
 void draw() {
   //this is automatically looped. Tries to get to 10000x per second
-  background(255); //need to draw background everytime, since that makes you have a "clean" screen. comment out if you want to see what happens without it 
-//  myPort.write(1);
+
+  background(255); //need to draw background everytime, since that makes you have a "clean" screen. comment out if you want to see what happens without it
+  draw_viz();
+  myPort.write(1);
+
   drawDataLoc();
   //get the powerspectrum (fft) per channel
   chan1.getSpectrum();
