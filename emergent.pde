@@ -70,6 +70,7 @@ void setup() {
 
   //connect with arduino commit in the myPort line if arduino is connected
   printArray(Serial.list());
+
   // myPort = new Serial(this, Serial.list()[0], 115200);
 
   //all setup needed for the data analyses per channel. 
