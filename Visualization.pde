@@ -5,6 +5,7 @@ void setup_viz()
   minim_viz = new Minim(this);
  
  // Load the song
+
   song_viz = minim_viz.loadFile("data/jazz/All.mp3");
 
 // Create the FFT object to analyze the song
@@ -19,9 +20,9 @@ void setup_viz()
 
   // Create all objects
   // Create cubic objects
-  for (int i = 0; i < nbCubes; i++) {
-   cubes[i] = new Cube(); 
-  }
+  //for (int i = 0; i < nbCubes; i++) {
+   //cubes[i] = new Cube(); 
+  //}
   
   // Create wall objects
   // Left Walls
@@ -46,7 +47,7 @@ void setup_viz()
   
   //Black background
   background(0);
-  song_viz.mute();
+  //song_viz.mute();
   // Start the song
   song_viz.play(0);
 }
@@ -103,19 +104,19 @@ void draw_viz()
 // Subtle background color
   background(scoreLow/100, scoreMid/100, scoreHi/100);
    
-  
+  //------CUBES COMMENTED OUT
 // Cube for each frequency band
-  for(int i = 0; i < nbCubes; i++)
-  {
+  //for(int i = 0; i < nbCubes; i++)
+  //{
     // Value of the frequency band
-    float bandValue = fft_viz.getBand(i);
+    //float bandValue = fft_viz.getBand(i);
     
     
 // The color is represented as red for bass, green for middle sounds and blue for highs.
     // Opacity is determined by the volume of the tape and the overall volume.
-    cubes[i].display(scoreLow, scoreMid, scoreHi, bandValue, scoreGlobal);
-  }
-  
+    //cubes[i].display(scoreLow, scoreMid, scoreHi, bandValue, scoreGlobal);
+  //}
+  //------CUBES COMMENTED OUT
   
 // Line walls, here you must keep the value of the previous band and the next one to connect them together
   float previousBandValue = fft_viz.getBand(0);
