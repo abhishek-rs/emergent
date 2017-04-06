@@ -91,17 +91,17 @@ void setup()
 
   //Murs droits
   for (int i = 1; i < nbWalls; i+=4) {
-    walls[i] = new Wall(width, height/2, 10, height);
+    walls[i] = new Wall(width/2, height/2, 10, height);
   }
 
   //Murs bas
   for (int i = 2; i < nbWalls; i+=4) {
-    walls[i] = new Wall(width/2, height, width, 10);
+    walls[i] = new Wall(width/2/2, height, width/2, 10);
   }
 
   //Murs haut
   for (int i = 3; i < nbWalls; i+=4) {
-    walls[i] = new Wall(width/2, 0, width, 10);
+    walls[i] = new Wall(width/2/2, 0, width/2, 10);
   }
 
   //Fond noir
@@ -115,7 +115,7 @@ void draw()
 {
   //Faire avancer la chanson. On draw() pour chaque "frame" de la chanson...
   fft.forward(song.mix);
-  
+  background(scoreLow/100, scoreMid/100, scoreHi/100);
   //Calcul des "scores" (puissance) pour trois catégories de son
   //D'abord, sauvgarder les anciennes valeurs
   oldScoreLow = scoreLow;
@@ -156,12 +156,22 @@ void draw()
     scoreHi = oldScoreHi - scoreDecreaseRate;
   }
 
+
+  //Pour chaque bande
+  drawstuff();
+  pushMatrix();
+  translate(width/2, 0);
+  drawstuff();
+  popMatrix();
+}
+
+void drawstuff() {
   //Volume pour toutes les fréquences à ce moment, avec les sons plus haut plus importants.
   //Cela permet à l'animation d'aller plus vite pour les sons plus aigus, qu'on remarque plus
   float scoreGlobal = 0.66*scoreLow + 0.8*scoreMid + 1*scoreHi;
 
   //Canvas background color
-  background(scoreLow/100, scoreMid/100, scoreHi/100);
+
   println("\n");
 
   //Murs lignes, ici il faut garder la valeur de la bande précédent et la suivante pour les connecter ensemble
@@ -177,7 +187,6 @@ void draw()
   //float heightMult = spotifySongData.get("energy")*8.0;
   float heightMult = 2;
 
-  //Pour chaque bande
   for (int i = 1; i < fft.specSize(); i++)
   {
     // The value of the frequency band, the farther bands are multiplied so that they are more visible.
@@ -188,7 +197,7 @@ void draw()
     strokeWeight(spotifySongData.get("energy") + (scoreGlobal/100));
 
     //diagonal line, left, lower
-    
+
     ////upper
     line(0, height-(previousBandValue*heightMult), dist*(i-1), 0, height-(bandValue*heightMult), dist*i);
     //lower
@@ -202,14 +211,14 @@ void draw()
     line(0, (previousBandValue*heightMult), dist*(i-1), (bandValue*heightMult), 0, dist*i);
 
     //diagonal line, right, lower
-    line(width, height-(previousBandValue*heightMult), dist*(i-1), width, height-(bandValue*heightMult), dist*i);
-    line(width-(previousBandValue*heightMult), height, dist*(i-1), width-(bandValue*heightMult), height, dist*i);
-    line(width, height-(previousBandValue*heightMult), dist*(i-1), width-(bandValue*heightMult), height, dist*i);
+    line(width/2, height-(previousBandValue*heightMult), dist*(i-1), width/2, height-(bandValue*heightMult), dist*i);
+    line(width/2-(previousBandValue*heightMult), height, dist*(i-1), width/2-(bandValue*heightMult), height, dist*i);
+    line(width/2, height-(previousBandValue*heightMult), dist*(i-1), width/2-(bandValue*heightMult), height, dist*i);
 
     //diagonal line, left, higher
-    line(width, (previousBandValue*heightMult), dist*(i-1), width, (bandValue*heightMult), dist*i);
-    line(width-(previousBandValue*heightMult), 0, dist*(i-1), width-(bandValue*heightMult), 0, dist*i);
-    line(width, (previousBandValue*heightMult), dist*(i-1), width-(bandValue*heightMult), 0, dist*i);
+    line(width/2, (previousBandValue*heightMult), dist*(i-1), width/2, (bandValue*heightMult), dist*i);
+    line(width/2-(previousBandValue*heightMult), 0, dist*(i-1), width/2-(bandValue*heightMult), 0, dist*i);
+    line(width/2, (previousBandValue*heightMult), dist*(i-1), width/2-(bandValue*heightMult), 0, dist*i);
 
     previousBandValue = bandValue;
   }
@@ -222,8 +231,6 @@ void draw()
     walls[i].display(scoreLow, scoreMid, scoreHi, intensity, scoreGlobal);
   }
 }
-
-
 //Classe pour afficher les lignes sur les cotés
 class Wall {
   //Position minimale et maximale Z
