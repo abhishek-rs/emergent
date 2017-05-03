@@ -1,0 +1,6 @@
+spotify urls (make them automatic with song selection)
+data url, make dynamic with song selection (in AudioFile.pde)
+finish textanalysis
+divide all instruments in 8 categories/tracks
+
+communication with unity
