@@ -9,7 +9,7 @@ const bool ShiftPWM_balanceLoad = false;
 #include <ShiftPWM.h>   // include ShiftPWM.h after setting the pins!
 
 unsigned char maxPower = 255;
-unsigned char pwmFrequency = 75;
+unsigned char pwmFrequency = 125;
 
 int numRegisters = 4;
 int incomingByte = 0;

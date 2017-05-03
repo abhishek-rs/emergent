@@ -28,6 +28,9 @@ int previousHandShake=99;
 
 //which port we open our server for unity
 int port = 5204; 
+int modeNumber;
+int songNumber; 
+
 
 void setup() {
 
@@ -36,24 +39,30 @@ void setup() {
   frameRate(600); //makes this sketch run as fast as possible
 
   // set up which folders we add to load the songs
-  folderNames = new String[]{"acdc/", "queen/", "beatles/", "bowie/", "test/"};
+  folderNames = new String[]{"bowie/", "beatles/", "acdc/", "queen/"};
 
   // take data from server 
   Client thisClient = myServer.available();
 
   //wait for connection with client
-  //while (thisClient == null) {
-  //  delay(10);
-  //  thisClient = myServer.available();
-  //  println("Client unavailable"+"\t"+millis());
-  //}   
+  while (thisClient == null) {
+    delay(10);
+    thisClient = myServer.available();
+    println("Client unavailable"+"\t"+millis());
+  }   
 
-  //get song number from client
-  //String whatClientSaid = thisClient.readString();
-  //int songNumber = Integer.parseInt(trim(whatClientSaid));
-  //println(songNumber);
+  String whatClientSaid = trim(thisClient.readString());
+  println(whatClientSaid);
+  String songNumberString=whatClientSaid.substring(0, 1);
+  String modeNumberString=whatClientSaid.substring(1, 2);
+  int songNumber = Integer.parseInt(songNumberString);
+  modeNumber=Integer.parseInt(modeNumberString);
 
-  int songNumber=3;
+  //songNumber = 0;
+  //modeNumber = 0;
+
+
+  println("songNumber: "+songNumber+"\t"+"modeNumber: " + modeNumber);
 
   //select corresponding song folder
   String song = folderNames[songNumber];
@@ -70,7 +79,7 @@ void setup() {
   // create a AudioFile for each file and put into array
   for (int i = 0; i < files.length; i++) {
     instruments[i] = new AudioFile(song + files[i]);
-    print(files[i]);
+    println(i+"\t"+files[i]);
   }
 
 
@@ -79,7 +88,7 @@ void setup() {
     instruments[i].startFFT();
   }
 
-  //delay(5000); //!we need to change this delay to sync with phone. 
+  //delay(8480); //!we need to change this delay to sync with phone. 
 
   //play all instruments. 
   for (int i = 0; i < instruments.length; i++) {
@@ -97,32 +106,45 @@ void draw() {
   for (int i = 0; i < instruments.length; i++) {
     instruments[i].getSpectrum();
   }
-  //delay(2); //some delay, otherwise things fuck up
+ // delay(2); //some delay, otherwise things fuck up
 
   //format data
-  for (int i = 0; i < instruments.length; i++) { //!can we do this in the class itself and save it into a global array?
-    newData=instruments[i].addData(); //things we get from each instrument
-    sendData[i*4+0]=newData[0]; //save it to one long array for sending 
-    sendData[i*4+1]=newData[1];
-    sendData[i*4+2]=newData[2];
-    sendData[i*4+3]=newData[3];
+
+  if (modeNumber==0) {
+    println("Adding Seperate Instruments");
+    for (int i = 0; i < instruments.length; i++) { //!can we do this in the class itself and save it into a global array?
+      newData=instruments[i].addData(); //things we get from each instrument
+      sendData[i*4+0]=newData[0]; //save it to one long array for sending 
+      sendData[i*4+1]=newData[1];
+      sendData[i*4+2]=newData[2];
+      sendData[i*4+3]=newData[3];
+    }
+  }
+
+  if (modeNumber==1) {
+    println("Adding All Only");
+    newData=instruments[0].addData();
+    for (int i=0; i<instruments.length; i++) {
+      sendData[i*4+0]=newData[0]; //save it to one long array for sending 
+      sendData[i*4+1]=newData[1];
+      sendData[i*4+2]=newData[2];
+      sendData[i*4+3]=newData[3];
+    }
   }
 
   //send data and wait for signal to get more
-  
+
   for (int i=0; i<sendData.length; i++) {
     if (myPort.available() > 0) {
       handShake=myPort.read();
     }
     if (previousHandShake != handShake) {
       myPort.clear();
-      println("handshake received"+"\t"+handShake+"\t"+sendData[handShake]);
+      println(modeNumber+"\t"+"handshake received"+"\t"+handShake+"\t"+sendData[handShake]);
       myPort.write(sendData[handShake]);
       previousHandShake=handShake;
     }
   }
-
-
   //println(sendData);
-  //delay(2); //some delay, otherwise things fuck up
+ // delay(2); //some delay, otherwise things fuck up
 }
